@@ -1,3 +1,5 @@
+import cors from 'cors';
+
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import bodyParser from 'body-parser';
 import express from 'express';
@@ -110,7 +112,10 @@ const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
   const config = { ...defaultConfig, ...givenConfig };
   config.graphiqlOptions = graphiqlOptions;
 
-  const graphQLServer = express();
+  // const graphQLServer = express();
+  // const graphQLServer = express().use('*', cors());
+  const graphQLServer = express().use(cors());
+  graphQLServer.options('*', cors())
 
   config.configServer(graphQLServer);
 
@@ -121,7 +126,7 @@ const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
 
   // cookies
   graphQLServer.use(cookiesMiddleware());
-  
+
   // compression
   graphQLServer.use(compression());
 
@@ -181,7 +186,7 @@ const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
         }
       }
     }
-    
+
     //add the headers to the context
     options.context.headers = req.headers;
 
@@ -198,7 +203,7 @@ const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
     // console.log('// apollo_server.js locale:', req.headers.locale);
 
     options.context.locale = user && user.locale || req.headers.locale || getSetting('locale', 'en');
-    
+
     // add error formatting from apollo-errors
     options.formatError = formatError;
 
