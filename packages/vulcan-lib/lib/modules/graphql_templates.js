@@ -162,6 +162,27 @@ export const singleInputTemplate = ({ typeName }) =>
   allowNull: Boolean
 }`;
 
+
+export const selectorInputTermsTemplate = ({ typeName, fields }) => `
+input ${typeName}TermsInput {
+  # A JSON object that contains the query terms in MongoDB format (e.g. { isFeatured: true })
+  selector: JSON
+  # A JSON object that contains the sort options in MongoDB format (e.g. { createdAt: -1 })
+  sort: JSON
+  # A limit for the query
+  limit: Int
+  # How much to offset the results by
+  offset: Int
+  # Which view to use
+  view: String
+  # Not actively used (regex search) 
+  query: String
+  # Not tested
+  itemsPerPage: Int
+  # Not tested
+  orderBy: JSON
+}`;
+
 /*
 
 The argument type when querying for multiple documents
@@ -177,23 +198,30 @@ type MultiMovieInput {
 export const multiInputTemplate = ({ typeName }) =>
 `input Multi${typeName}Input {
   # A JSON object that contains the query terms used to fetch data
-  terms: JSON,
-  # How much to offset the results by
-  offset: Int,
-  # A limit for the query
-  limit: Int,
+  terms: ${typeName}TermsInput,
+  # terms: JSON
   # Whether to enable caching for this query
   enableCache: Boolean
   # Whether to calculate totalCount for this query
   enableTotal: Boolean
-  # OpenCRUD fields
+  # NOT USED!
   where: ${typeName}SelectorInput
+  # NOT USED!
   orderBy: ${typeName}OrderByInput
+  # NOT USED!
   skip: Int
+  # NOT USED!
   after: String
+  # NOT USED!
   before: String
+  # NOT USED!
   first: Int
+  # NOT USED!
   last: Int
+  # NOT USED!
+  offset: Int,
+  # NOT USED!
+  limit: Int,
 }`;
 
 /* ------------------------------------- Query Output Types ------------------------------------- */

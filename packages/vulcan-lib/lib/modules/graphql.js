@@ -13,7 +13,7 @@ import Vulcan from './config.js'; // used for global export
 import { Utils } from './utils.js';
 import { disableFragmentWarnings } from 'graphql-tag';
 import { isIntlField } from './intl.js';
-import { selectorInputTemplate, mainTypeTemplate, createInputTemplate, createDataInputTemplate, updateInputTemplate, updateDataInputTemplate, orderByInputTemplate, selectorUniqueInputTemplate, deleteInputTemplate, upsertInputTemplate, singleInputTemplate, multiInputTemplate, multiOutputTemplate, singleOutputTemplate, mutationOutputTemplate, singleQueryTemplate, multiQueryTemplate, createMutationTemplate, updateMutationTemplate, upsertMutationTemplate, deleteMutationTemplate } from './graphql_templates.js';
+import { selectorInputTemplate, selectorInputTermsTemplate, mainTypeTemplate, createInputTemplate, createDataInputTemplate, updateInputTemplate, updateDataInputTemplate, orderByInputTemplate, selectorUniqueInputTemplate, deleteInputTemplate, upsertInputTemplate, singleInputTemplate, multiInputTemplate, multiOutputTemplate, singleOutputTemplate, mutationOutputTemplate, singleQueryTemplate, multiQueryTemplate, createMutationTemplate, updateMutationTemplate, upsertMutationTemplate, deleteMutationTemplate } from './graphql_templates.js';
 
 disableFragmentWarnings();
 
@@ -124,7 +124,7 @@ export const GraphQLSchema = {
   addDirective(directive) {
     this.directives = deepmerge(this.directives, directive);
   },
-  
+
   // for a given schema, return main type fields, selector fields,
   // unique selector fields, orderBy fields, creatable fields, and updatable fields
   getFields(schema, typeName) {
@@ -291,19 +291,21 @@ export const GraphQLSchema = {
 
       schemaFragments.push(selectorInputTemplate({ typeName, fields: selector }));
 
+      schemaFragments.push(selectorInputTermsTemplate({ typeName, fields: selector }));
+
       schemaFragments.push(selectorUniqueInputTemplate({ typeName, fields: selectorUnique }));
 
       schemaFragments.push(orderByInputTemplate({ typeName, fields: orderBy }));
 
       if (!_.isEmpty(resolvers)) {
         const queryResolvers = {};
-  
+
         // single
         if (resolvers.single) {
           addGraphQLQuery(singleQueryTemplate({ typeName }), resolvers.single.description);
           queryResolvers[Utils.camelCaseify(typeName)] = resolvers.single.resolver.bind(resolvers.single);
         }
-  
+
         // multi
         if (resolvers.multi) {
           addGraphQLQuery(multiQueryTemplate({ typeName }), resolvers.multi.description);
@@ -311,7 +313,7 @@ export const GraphQLSchema = {
         }
         addGraphQLResolvers({ Query: { ...queryResolvers } });
       }
-      
+
       if (!_.isEmpty(mutations)) {
         const mutationResolvers = {};
         // create
@@ -323,7 +325,7 @@ export const GraphQLSchema = {
         if (mutations.update) { // e.g. "updateMovie(input: UpdateMovieInput) : Movie"
           addGraphQLMutation(updateMutationTemplate({ typeName }), mutations.update.description);
           mutationResolvers[`update${typeName}`] = mutations.update.mutation.bind(mutations.update);
-    
+
         }
         // upsert
         if (mutations.upsert) { // e.g. "upsertMovie(input: UpsertMovieInput) : Movie"
