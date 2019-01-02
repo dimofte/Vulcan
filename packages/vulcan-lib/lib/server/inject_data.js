@@ -41,7 +41,7 @@ export const InjectData = {
       const warnMessage =
         'warn: injecting data turned off due to CORS headers. ' +
         'read more: http://goo.gl/eGwb4e';
-      console.warn(warnMessage); // eslint-disable-line no-console
+      // console.warn(warnMessage); // eslint-disable-line no-console
       return;
     }
 
