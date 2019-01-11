@@ -284,7 +284,9 @@ const DatatableRow = (props, { intl }) => {
   const canEdit = collection && collection.options && collection.options.mutations && collection.options.mutations.edit && collection.options.mutations.edit.check(currentUser, document);
 
   const row = typeof rowClass === 'function' ? rowClass(document) : rowClass || '';
-  const modalProps = { title: <code>{document._id}</code> };
+  const modalProps = {
+    title: editFormOptions && editFormOptions.titleGetter && editFormOptions.titleGetter(document) || <code>{document._id}</code>
+  };
 
   return (
   <tr className={`datatable-item ${row}`}>
